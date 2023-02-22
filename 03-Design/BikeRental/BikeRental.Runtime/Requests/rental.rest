@@ -1,0 +1,53 @@
+### make reservation
+POST http://localhost:5249/api/rental/reservation/ HTTP/1.1
+content-type: application/json
+
+{
+  "BikeId": "D44256BE-1609-41E5-9EE5-242575B45AD5"
+}
+
+
+### cancel reservation
+POST http://localhost:5249/api/rental/reservation/cancel HTTP/1.1
+content-type: application/json
+
+{
+  "ReservationId": "46b3b441-9df7-40cf-8878-e4adb674cfdf"
+}
+
+
+### rent a bike
+POST http://localhost:5249/api/rental/rental/ HTTP/1.1
+content-type: application/json
+
+{
+  "BikeId": "D44256BE-1609-41E5-9EE5-242575B45AD5"
+}
+
+
+### rent a bike, based on reservation
+POST http://localhost:5249/api/rental/rental/basedOnReservation HTTP/1.1
+content-type: application/json
+
+{
+  "ReservationId": "ca593966-8fa4-451f-8d2a-92f1ae72abb1"
+}
+
+### finish rental
+POST http://localhost:5249/api/rental/finish/ HTTP/1.1
+content-type: application/json
+
+{
+  "RentalId": "d3b334a7-55cd-4b87-9a74-c5031360f3ee"
+}
+
+
+### finish rental outside station
+POST http://localhost:5249/api/rental/finishoutside/ HTTP/1.1
+content-type: application/json
+
+{
+  "RentalId": "6f1867d5-f910-4afa-963c-7b59d5f27c89"
+}
+
+
