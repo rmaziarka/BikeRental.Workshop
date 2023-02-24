@@ -1,5 +1,4 @@
-﻿using BikeRental.Domain.Shared.Rental;
-using BikeRental.Tech;
+﻿using BikeRental.Tech;
 
 namespace BikeRental.Domain.Rental.Rental.RentBike;
 
@@ -15,14 +14,12 @@ public class RentBikeHandler: ICommandHandler<RentBike>
     }
     public void Handle(RentBike command)
     {
-        var rental = Rental.RentBike(command.RentalId, command.BikeId, command.ClientId);
+        var basedOn = RentalBasedOn.FromAdHoc();
+        
+        var rental = Rental.RentBike(command.RentalId, command.BikeId, command.ClientId, basedOn);
         _repository.Create(rental);
         
         // remove bike availability
-        
-        _repository.Commit();
-
-        _eventBus.PublishFromEntity(rental);
     }
 }
 

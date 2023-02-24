@@ -1,5 +1,4 @@
 ﻿using BikeRental.Domain.Rental.Reservation;
-using BikeRental.Domain.Shared.Rental;
 using BikeRental.Tech;
 
 namespace BikeRental.Domain.Rental.Rental.RentBikeBasedOnReservation;
@@ -23,17 +22,16 @@ public class RentBikeBasedOnReservationHandler: ICommandHandler<RentBikeBasedOnR
         var reservation = _reservationRepository.Query().First(r => r.Id == command.ReservationId);
         reservation.Finish();
 
-        var rental = Rental.RentBikeFromReservation(
+        var basedOn = RentalBasedOn.FromReservation(reservation.Id);
+        
+        var rental = Rental.RentBike(
             command.RentalId, 
             reservation.BikeId, 
             command.ClientId,
-            command.ReservationId
+            basedOn
         );
         
         _repository.Create(rental);
-
-        _eventBus.PublishFromEntity(rental);
-        _eventBus.PublishFromEntity(reservation);
     }
 }
 

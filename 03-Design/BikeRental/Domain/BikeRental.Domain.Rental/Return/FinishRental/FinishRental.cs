@@ -17,8 +17,6 @@ public class FinishRentalHandler:ICommandHandler<FinishRental>
     {
         var rental = _repository.Query().First(r => r.Id == command.RentalId);
         rental.Finish();
-
-        _eventBus.PublishFromEntity(rental);
     }
 }
 

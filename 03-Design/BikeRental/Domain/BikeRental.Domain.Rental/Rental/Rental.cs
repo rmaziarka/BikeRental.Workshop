@@ -1,5 +1,4 @@
 ﻿using BikeRental.Domain.Rental.Reservation;
-using BikeRental.Domain.Shared.Rental;
 using BikeRental.Tech;
 
 namespace BikeRental.Domain.Rental.Rental;
@@ -13,18 +12,11 @@ public class RentalId:SingleValueObject<Guid>
 
 public class Rental : Entity<RentalId>, IAggregateRoot
 {
-    public static Rental RentBike(RentalId id, BikeId bikeId, ClientId clientId)
+    public static Rental RentBike(RentalId id, BikeId bikeId, ClientId clientId, RentalBasedOn basedOn)
     {
         var startDate = DateTimeOffset.Now;
 
-        return new Rental(id, bikeId, clientId, startDate);
-    }
-    
-    public static Rental RentBikeFromReservation(RentalId id, BikeId bikeId, ClientId clientId, ReservationId reservationId)
-    {
-        var startDate = DateTimeOffset.Now;
-
-        return new Rental(id, bikeId, clientId, startDate, reservationId);
+        return new Rental(id, bikeId, clientId, startDate, basedOn);
     }
 
     public void Finish()
@@ -55,7 +47,7 @@ public class Rental : Entity<RentalId>, IAggregateRoot
 
     private BikeId _bikeId;
 
-    private DateTimeOffset _startDate;
+    public DateTimeOffset StartDate { get; }
     
     private readonly RentalBasedOn _basedOn;
     
@@ -63,30 +55,23 @@ public class Rental : Entity<RentalId>, IAggregateRoot
     
     private bool _finishedOutsideStation;
 
-    private Rental(RentalId id, BikeId bikeId, ClientId clientId, DateTimeOffset startDate)
+    private Rental(RentalId id, BikeId bikeId, ClientId clientId, DateTimeOffset startDate, RentalBasedOn basedOn)
     {
         Id = id;
         _bikeId = bikeId;
         _clientId = clientId;
-        _startDate = startDate;
-        _basedOn = RentalBasedOn.FromAdHoc();
+        StartDate = startDate;
+        _basedOn = basedOn;
         
-        var @event = new BikeRented(Id, _bikeId, _clientId, _startDate);
-        AddEvent(@event);
-    }
-    
-    private Rental(RentalId id, BikeId bikeId, ClientId clientId, DateTimeOffset startDate, ReservationId reservationId)
-    {
-        Id = id;
-        _bikeId = bikeId;
-        _clientId = clientId;
-        _startDate = startDate;
-        _basedOn = RentalBasedOn.FromReservation(reservationId);
-        
-        var @event = new BikeRented(Id, _bikeId, _clientId, _startDate);
+        var @event = new BikeRented(Id, _bikeId, _clientId, StartDate);
         AddEvent(@event);
     }
 }
+
+
+public record BikeRented(RentalId RentalId, BikeId BikeId, ClientId ClientId, DateTimeOffset StartDate);
+public record RentalFinished(RentalId RentalId, ClientId ClientId, DateTimeOffset FinishDate);
+public record RentalFinishedOutsideStation(RentalId RentalId, ClientId ClientId, DateTimeOffset FinishDate);
 
 public class RentalBasedOn : ValueObject
 {
@@ -112,7 +97,8 @@ public class RentalBasedOn : ValueObject
     
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        throw new NotImplementedException();
+        yield return Type;
+        yield return ReservationId;
     }
 }
 

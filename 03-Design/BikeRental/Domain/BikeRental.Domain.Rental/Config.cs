@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using BikeRental.Domain.Rental.Rental.RentBike;
 using BikeRental.Domain.Rental.Rental.CancelReservation;
-using BikeRental.Domain.Rental.Rental.MakeReservation;
 using BikeRental.Domain.Rental.Rental.RentBikeBasedOnReservation;
+using BikeRental.Domain.Rental.Reservation.MakeReservation;
 using BikeRental.Domain.Rental.Return.FinishRental;
 using BikeRental.Domain.Rental.Return.FinishRentalOutsideStation;
 using BikeRental.Tech;
@@ -40,6 +40,16 @@ public static class EventBusExtensions
     public static IServiceCollection RegisterAllRentalEventHandlers(this IServiceCollection services)
     {
         services.RegisterAllEventHandlers(Assembly.GetExecutingAssembly());
+
+        return services;
+    }
+}
+
+public static class IntegrationEventBusExtensions
+{
+    public static IServiceCollection RegisterAllRentalIntegrationEventHandlers(this IServiceCollection services)
+    {
+        services.RegisterAllIntegrationEventHandlers(Assembly.GetExecutingAssembly());
 
         return services;
     }
